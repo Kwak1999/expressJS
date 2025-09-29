@@ -3,6 +3,7 @@ const path = require('path');
 const usersRouter = require('./routes/users_Router');
 const postsRouter = require('./routes/post_Router');
 const mongoose = require("mongoose");
+const productsRouter = require("./routes/product.router");
 
 const PORT = 4000;
 
@@ -29,15 +30,21 @@ app.use((req, res, next) => {
     console.log(`${req.method} ${req.baseUrl}${req.url} ${diffTime}ms`);
 });
 
-app.get('/', (req, res) => {
-    res.render('index', {
-        imageTitle: "It is a forest"
-    })
+app.get('/', (req, res, next) => {
+    setImmediate(() => { next( new Error('it is an error')); })
+    // res.render('index', {
+    //     imageTitle: "It is a forest"
+    // })
+})
+
+app.use((error, req, res, next) => {
+    res.json({ message: error.message });
 })
 
 
 app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
+app.use('/products', productsRouter);
 
 app.listen(PORT, () => {
     console.log(`Listening on ${PORT}...`);
